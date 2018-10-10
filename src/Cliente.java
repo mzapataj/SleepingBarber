@@ -19,7 +19,7 @@ public class Cliente extends Thread {
     public Cliente(Barberia b, String nombreProceso){
         super(nombreProceso);
         barberia = b;
-        System.out.println(this.getName()+ " llega a la barberia");
+        System.out.println(this.getName()+ " llega a la barbería");
     }
     @Override
     public void run(){

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
  *
  * @author mzapataj
  */
+
 public class Barbero extends Thread{
     
     Barberia barberia;
