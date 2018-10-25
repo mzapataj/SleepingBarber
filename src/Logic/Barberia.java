@@ -1,4 +1,8 @@
+package Logic;
 
+
+import com.sun.corba.se.spi.transport.CorbaConnection;
+import java.util.Random;
 import java.util.concurrent.*;
 
 /*
@@ -16,42 +20,60 @@ public class Barberia {
     Semaphore barberoListo;
     Semaphore sillasAccesibles;
     Semaphore clientes;
+    Random rng;
     int sillasLibres;
+    
 
     public Barberia(int tam) {
         sillasLibres = tam;
-        barberoListo = new Semaphore(1, true);
+        barberoListo = new Semaphore(0, true);
         sillasAccesibles =  new Semaphore(1, true);
         clientes = new Semaphore(0, true);
-        System.out.println("Una nueva barbería ha sido abierta al público.");
+        Log("Una nueva barbería ha sido abierta al público.");
     }
     
-    public void atenderCliente(String nombre) throws InterruptedException{
+    public void atenderCliente(Barbero barber) throws InterruptedException{
+        
+        if (clientes.availablePermits() == 0) {
+            Log(barber.getName()+ " se duerme");
+            barber.setEstaDormido(true);
+        }
+        
         clientes.acquire();
-        System.out.println(nombre + " se despierta.");
+        
+        if (barber.estaDormido()) {
+            Log(barber.getName() + " se despierta.");
+            barber.setEstaDormido(false);
+        }
+        
         sillasAccesibles.acquire();
         sillasLibres += 1;
-        System.out.println(nombre + " está listo para cortar el pelo.");
         barberoListo.release();
         sillasAccesibles.release();
-        //System.out.println(nombre + " ha terminado de cortar el pelo.");
-        System.out.println(nombre + " está cortando el pelo....");
+        barber.cortarCabello();
+        
+    
     }
     
-    public void llegadaCliente(String nombre) throws InterruptedException{
+    public void llegadaCliente(Cliente customer) throws InterruptedException{
         sillasAccesibles.acquire();
         if (sillasLibres > 0) {
-            System.out.println(nombre + " se siente en una silla de espera.");
+            Log(customer.getName() + " se siente en una silla de espera.");
             sillasLibres -= 1;
             clientes.release();
             sillasAccesibles.release();
             barberoListo.acquire();
-            System.out.println(nombre + " pasa a ser atendido.");
+            customer.recibirCortarCabello();
+            
         }else{
             sillasAccesibles.release();
-            System.out.println(nombre + " se va de la barbería.");
+            Log("No hay sillas libres. "+ customer.getName() + " se va de la barbería.");
         }
             //System.out.println(nombre + " se va de la barbería.");
+    }
+    
+    public static void Log(String mensaje){
+        System.out.println(mensaje);
     }
     
 }
