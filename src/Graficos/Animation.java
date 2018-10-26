@@ -14,26 +14,34 @@ public class Animation {
     private int animationDirection;         // animation direction (i.e counting forward or backward)
     private int totalFrames;                // total amount of frames for your animation
     private int x;
+    private int vx;
     private int y;
+    private int vy;
     
     private boolean stopped;                // has animations stopped
 
     private List<Frame> frames = new ArrayList<Frame>();    // Arraylist of frames 
 
-    public Animation(BufferedImage[] frames, int frameDelay) {
+    public Animation(BufferedImage[] frames, int frameDelay, int x, int y, int vx, int vy) {
         this.frameDelay = frameDelay;
         this.stopped = true;
-
+        
         for (int i = 0; i < frames.length; i++) {
             addFrame(frames[i], frameDelay);
         }
 
+        
         this.frameCount = 0;
         this.frameDelay = frameDelay;
         this.currentFrame = 0;
         this.animationDirection = 1;
         this.totalFrames = this.frames.size();
 
+        this.x = x;
+        this.vx = vx;
+        this.y = y;
+        this.vy = vy;
+        
     }
 
     public void start() {
@@ -100,6 +108,10 @@ public class Animation {
                 else if (currentFrame < 0) {
                     currentFrame = totalFrames - 1;
                 }
+                
+                x+=vx;
+                y+=vy;
+                System.out.println("("+x+","+y+")");
             }
             
         }
@@ -107,7 +119,7 @@ public class Animation {
     }
     
     public void drawSprite(Graphics g){
-        g.drawImage(this.getSprite(), 50, 50, null);
+        g.drawImage(this.getSprite(), x, y, null);
     }
 
 }

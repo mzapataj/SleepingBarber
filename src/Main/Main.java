@@ -24,12 +24,12 @@ public class Main     {
     public static void main(String[] args) throws InterruptedException {
         
         InterfazGrafica ui = new InterfazGrafica();
-        Lienzo lienzo = new Lienzo();
-        lienzo.setSize(500, 500);
-        lienzo.setBackground(Color.GREEN);
         ui.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        ui.add(lienzo);
         ui.setVisible(true);
+        
+        Lienzo lienzo = new Lienzo(ui.getWidth()-200, ui.getHeight());
+        lienzo.setBackground(Color.GREEN);
+        ui.add(lienzo);
         lienzo.start();
         
         /*Barberia barberia = new Barberia(10);

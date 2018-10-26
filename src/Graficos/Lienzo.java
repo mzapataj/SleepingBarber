@@ -13,7 +13,7 @@ import static java.lang.Thread.sleep;
  *
  * @author Jorge
  */
-public class Lienzo extends javax.swing.JPanel implements Runnable {
+public final class Lienzo extends javax.swing.JPanel implements Runnable {
 
     /**
      * Creates new form Lienzo
@@ -26,19 +26,23 @@ public class Lienzo extends javax.swing.JPanel implements Runnable {
     Sprite[] guyRight = new Sprite[3];
     Sprite[] guyLeft = new Sprite[3];
 
-    private Animation animation;
+    private Animation currentAnimation;
+    
     static final long FPS = 30;
     boolean running = false;
 
-    public Lienzo() {
+    public Lienzo(int x, int y) {
         initComponents();
         loadAllSprites();
-        BufferedImage[] up = {sprites[0].getSprite(), sprites[1].getSprite(), sprites[2].getSprite()};
-        Animation upAnimation = new Animation(up, 5000000);
-        animation = upAnimation;
-        animation.start();
+        
+        setLocation(200, 0);
+        setSize(x-200, y-150);
+        
+        loadAnimations(getWidth(), getHeight());
     
     }
+    
+    
 
     public final void loadAllSprites() {
     
@@ -63,10 +67,22 @@ public class Lienzo extends javax.swing.JPanel implements Runnable {
         sprites[14] = new Sprite("rack1"); 
     }
 
+    public void loadAnimations(int initX, int initY){
+        BufferedImage[] up = {sprites[0].getSprite(), sprites[1].getSprite(), sprites[2].getSprite()};
+        System.out.println("("+initX+","+initY+")");
+        Animation upAnimation = new Animation(up, 2000000, initX/2-16, initY-50, 0, -10);
+        currentAnimation = upAnimation;
+        currentAnimation.start();
+    }
+    
+    private void setCurrentAnimation(Animation animation){
+        currentAnimation = animation;
+    }
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        animation.drawSprite(g);
+        currentAnimation.drawSprite(g);
     }
 
     /**
@@ -109,7 +125,7 @@ public class Lienzo extends javax.swing.JPanel implements Runnable {
         while (running) {
             startTime = System.currentTimeMillis();
             repaint();
-            animation.update(startTime);
+            currentAnimation.update(startTime);
 /*
             sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
             try {
