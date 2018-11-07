@@ -5,9 +5,17 @@
  */
 package Graficos;
 
+import Logic.Barberia;
+import Logic.Barbero;
+import Logic.Cliente;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import static java.lang.Thread.sleep;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -20,69 +28,54 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
      */
     private static final String[] DIRECCIONES = {"Up", "Down", "Right", "Left"};
 
-    Sprite[] sprites = new Sprite[Sprite.TOTAL_SPRITES];
-    Sprite[] guyDown = new Sprite[3];
-    Sprite[] guyUp = new Sprite[3];
-    Sprite[] guyRight = new Sprite[3];
-    Sprite[] guyLeft = new Sprite[3];
+    public Barbero barber;
+    public List<Cliente> clientes;
+    private Barberia barbershop;
+    public List<Imagen> sillas;
 
-    private Animation currentAnimation;
-    
+    Imagen[] sprites = new Imagen[Imagen.TOTAL_SPRITES];
+    Imagen[] guyDown = new Imagen[3];
+    Imagen[] guyUp = new Imagen[3];
+    Imagen[] guyRight = new Imagen[3];
+    Imagen[] guyLeft = new Imagen[3];
+
+    //private Animation currentAnimation;
+    private final Imagen fondo;
     static final long FPS = 30;
-    boolean running = false;
+    volatile boolean running = false;
+    public boolean paused;
+    public boolean haSidoPausado;
 
-    public Lienzo(int x, int y) {
+    public Lienzo(int x, int y, Barberia barberia) {
+
         initComponents();
-        loadAllSprites();
+        //setLocation((x - 900) / 2, 0);
+        setLocation(50, 0);
+        setSize(900, 600);
+        fondo = new Imagen("fondo");
+        clientes = new CopyOnWriteArrayList<>();
+        barbershop = barberia;
+        barber = new Barbero(barberia, "Barbero");
+        barber.setCurrentAnimation(barber.getAnimaciones()[1]);
+        sillas = barbershop.spriteSillas;
+        paused = false;
+        haSidoPausado = false;
         
-        setLocation(200, 0);
-        setSize(x-200, y-150);
-        
-        loadAnimations(getWidth(), getHeight());
-    
-    }
-    
-    
-
-    public final void loadAllSprites() {
-    
-        sprites[0] = new Sprite("guy" + DIRECCIONES[0] + 1);
-        sprites[1] = new Sprite("guy" + DIRECCIONES[0] + 2);
-        sprites[2] = new Sprite("guy" + DIRECCIONES[0] + 3);
-        
-        sprites[3] = new Sprite("guy" + DIRECCIONES[1] + 1);
-        sprites[4] = new Sprite("guy" + DIRECCIONES[1] + 2);
-        sprites[5] = new Sprite("guy" + DIRECCIONES[1] + 3);
-        
-        sprites[6] = new Sprite("guy" + DIRECCIONES[2] + 1);
-        sprites[7] = new Sprite("guy" + DIRECCIONES[2] + 2);
-        sprites[8] = new Sprite("guy" + DIRECCIONES[2] + 3);
-        
-        sprites[9] = new Sprite("guy" + DIRECCIONES[3] + 1);
-        sprites[10] = new Sprite("guy" + DIRECCIONES[3] + 2);
-        sprites[11] = new Sprite("guy" + DIRECCIONES[3] + 3);
-
-        sprites[12] = new Sprite("suelo1");
-        sprites[13] = new Sprite("chair1");
-        sprites[14] = new Sprite("rack1"); 
     }
 
-    public void loadAnimations(int initX, int initY){
-        BufferedImage[] up = {sprites[0].getSprite(), sprites[1].getSprite(), sprites[2].getSprite()};
-        System.out.println("("+initX+","+initY+")");
-        Animation upAnimation = new Animation(up, 2000000, initX/2-16, initY-50, 0, -10);
-        currentAnimation = upAnimation;
-        currentAnimation.start();
-    }
-    
-    private void setCurrentAnimation(Animation animation){
-        currentAnimation = animation;
-    }
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        currentAnimation.drawSprite(g);
+        g.drawImage(fondo.getImagen(), 0, 0, null);
+
+        for (Imagen silla : sillas) {
+            silla.drawImagen(g);
+        }
+        for (Cliente cliente : clientes) {
+            cliente.getCurrentAnimation().drawSprite(g);
+        }
+        barber.getCurrentAnimation().drawSprite(g);
+
     }
 
     /**
@@ -123,20 +116,30 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
         long beginTime = System.currentTimeMillis();
 
         while (running) {
-            startTime = System.currentTimeMillis();
-            repaint();
-            currentAnimation.update(startTime);
-/*
-            sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
-            try {
-                if (sleepTime > 0) {
-                    sleep(sleepTime);
-                } else {
-                    sleep(10);
+            if (!paused) {
+                startTime = System.currentTimeMillis() - beginTime;
+
+                for (Cliente cliente : clientes) {
+                    cliente.getCurrentAnimation().update();
+                    cliente.moveHandler(this);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
+                barber.getCurrentAnimation().update();
+                barber.moveHandler(this);
+                repaint();
+                sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+                try {
+
+                    if (sleepTime > 0) {
+                        sleep(sleepTime);
+                    } else {
+                        sleep(10);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 

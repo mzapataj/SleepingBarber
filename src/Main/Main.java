@@ -1,12 +1,12 @@
 package Main;
 
-
 import Graficos.Lienzo;
-import Logic.Cliente;
-import Logic.Barbero;
 import Logic.Barberia;
-import java.awt.Color;
+import Logic.Barbero;
+import Logic.Cliente;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 /*
@@ -14,56 +14,48 @@ import javax.swing.JFrame;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author mzapataj
  */
+public class Main {
 
-public class Main     {
+    public static Barberia barberia;
+    public static long tiempoInicioPausa;
+    public static long tiempoFinalPausa;
+    
     public static void main(String[] args) throws InterruptedException {
+
         
-        InterfazGrafica ui = new InterfazGrafica();
-        ui.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        ui.setVisible(true);
+
+        int numSillas = 13;
+        while (numSillas > 12) {
+            try {
+                numSillas = Integer.valueOf(JOptionPane.showInputDialog(null, "Digite el numero de sillas de la barbería (máx 12 sillas)", "Barbero Dormilón", 1));
+            } catch (NumberFormatException e) {
+                numSillas = -1;
+            }
+        }
         
-        Lienzo lienzo = new Lienzo(ui.getWidth()-200, ui.getHeight());
-        lienzo.setBackground(Color.GREEN);
-        ui.add(lienzo);
-        lienzo.start();
-        
-        /*Barberia barberia = new Barberia(10);
-        Barbero barbero = new Barbero(barberia, "Barbero");
-        barbero.start();
-        
-        for (int i = 1; i <= 10; i++) {
-            Cliente cliente = new Cliente(barberia, "Cliente "+i);
-            cliente.start();
-            Thread.sleep(2000);
-        }*/
-        /*
-        Cliente cliente1 = new Cliente(barberia, "Cliente 1");
-        Cliente cliente2 = new Cliente(barberia, "Cliente 2");
-        Cliente cliente3 = new Cliente(barberia, "Cliente 3");
-        Cliente cliente4 = new Cliente(barberia, "Cliente 4");
-        Cliente cliente5 = new Cliente(barberia, "Cliente 5");
-        Cliente cliente6 = new Cliente(barberia, "Cliente 6");
-        Cliente cliente7 = new Cliente(barberia, "Cliente 7");
-        Cliente cliente8 = new Cliente(barberia, "Cliente 8");
-        Cliente cliente9 = new Cliente(barberia, "Cliente 9");
-        Cliente cliente10 = new Cliente(barberia, "Cliente 10");
-        
-        barbero.start();
-        cliente1.start();
-        cliente2.start();
-        cliente3.start();
-        cliente4.start();
-        cliente5.start();
-        cliente6.start();
-        cliente7.start();
-        cliente8.start();
-        cliente9.start();
-        cliente10.start();
-    */
+        if (numSillas != -1) {
+            
+            InterfazGrafica ui = new InterfazGrafica();
+            ui.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            ui.setVisible(true);
+
+            barberia = new Barberia(numSillas);
+
+            Lienzo lienzo = new Lienzo(ui.getWidth(), ui.getHeight(), barberia);
+            barberia.setLienzo(lienzo);
+            lienzo.barber.start();
+            
+            ui.inicializarBotonCliente();
+            ui.inicializarBotonPausa();
+            
+            ui.setLienzo(lienzo);
+            ui.add(lienzo);
+
+            lienzo.start();
+        }
     }
 }

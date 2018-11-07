@@ -13,9 +13,9 @@ public class Animation {
     private int currentFrame;               // animations current frame
     private int animationDirection;         // animation direction (i.e counting forward or backward)
     private int totalFrames;                // total amount of frames for your animation
-    private int x;
+    public int x;
     private int vx;
-    private int y;
+    public int y;
     private int vy;
     
     private boolean stopped;                // has animations stopped
@@ -43,7 +43,30 @@ public class Animation {
         this.vy = vy;
         
     }
+    
+    public Animation(BufferedImage[] frames, int frameDelay, int vx, int vy) {
+        this.frameDelay = frameDelay;
+        this.stopped = true;
+        
+        for (int i = 0; i < frames.length; i++) {
+            addFrame(frames[i], frameDelay);
+        }
 
+        
+        this.frameCount = 0;
+        this.frameDelay = frameDelay;
+        this.currentFrame = 0;
+        this.animationDirection = 1;
+        this.totalFrames = this.frames.size();
+
+        this.vx = vx;
+        this.vy = vy;
+        
+    }
+    public void setLocation(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
     public void start() {
         if (!stopped) {
             return;
@@ -93,29 +116,29 @@ public class Animation {
         return frames.get(currentFrame).getFrame();
     }
 
-    public void update(long s) {
+    public void update() {
         
         if (!stopped) {
             frameCount++;
 
-            if (frameCount > frameDelay) {
+            if (frameCount > frameDelay) {              
                 frameCount = 0;
                 currentFrame += animationDirection;
 
                 if (currentFrame > totalFrames - 1) {
                     currentFrame = 0;
                 }
+                
                 else if (currentFrame < 0) {
                     currentFrame = totalFrames - 1;
                 }
                 
                 x+=vx;
-                y+=vy;
-                System.out.println("("+x+","+y+")");
-            }
-            
+                y+=vy;               
+                //System.out.println(s-l);
+                
+            }           
         }
-
     }
     
     public void drawSprite(Graphics g){
