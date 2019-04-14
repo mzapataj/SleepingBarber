@@ -4,10 +4,7 @@ import Graficos.Animation;
 import Graficos.Imagen;
 import Graficos.Lienzo;
 import static Logic.Barberia.Log;
-import Main.Main;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,8 +24,9 @@ public class Barbero extends Persona {
 
         super(b, nombreProceso);
         estaDormido = true;
-        cargarAnimaciones("barber", 0);
-
+        cargarAnimaciones("barber", 0); 
+        BufferedImage[] up = {new Imagen("barberUp2").getImagen(), new Imagen("barberUp3").getImagen()};
+        animaciones[0] = new Animation(up, 10, 0, -1*0);
         animaciones[0].setLocation(660, 155);
         animaciones[1].setLocation(660, 155);
         animaciones[2].setLocation(660, 155);
@@ -55,13 +53,15 @@ public class Barbero extends Persona {
             
         }while(getAnimaciones()[1].equals(getCurrentAnimation()));
        */ 
-        while (true) {
-            if (!barberia.getLienzo().paused) {
+        //while (true) {
+            //if (!barberia.getLienzo().paused) {
                 try {
-                    System.out.println("delta barbero: "+ delta);
+                    /*System.out.println("delta barbero: "+ delta);
                     tiempoInicioAtendida = System.currentTimeMillis();
-                    sleep(5000-delta);
-                    if (Barbero.haSidoPausado) {
+                    sleep(5000-delta);*/
+                    sleep(5000);
+                    setCurrentAnimation(getAnimaciones()[1]);
+                    /*if (Barbero.haSidoPausado) {
                         delta = Math.abs(Main.tiempoInicioPausa-tiempoInicioAtendida);
                         Barbero.haSidoPausado = false;
                     }else{
@@ -69,15 +69,14 @@ public class Barbero extends Persona {
                         break;
                     }
                     System.out.println("delta barbero: "+ delta);
+                    */
                 } catch (InterruptedException ex) {
                     
                 }
                 
-            }
-            System.out.println(getName());
+            //}
             
-        }
-        System.out.println("Me sali del ciclo");
+        //}
 
     }
 

@@ -9,12 +9,8 @@ import Logic.Barberia;
 import Logic.Barbero;
 import Logic.Cliente;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import static java.lang.Thread.sleep;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,8 +22,7 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
     /**
      * Creates new form Lienzo
      */
-    private static final String[] DIRECCIONES = {"Up", "Down", "Right", "Left"};
-
+    
     public Barbero barber;
     public List<Cliente> clientes;
     private Barberia barbershop;
@@ -121,6 +116,7 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
 
                 for (Cliente cliente : clientes) {
                     cliente.getCurrentAnimation().update();
+                    cliente.label.setLocation(cliente.getCurrentAnimation().x+16, cliente.getCurrentAnimation().y-10);
                     cliente.moveHandler(this);
                 }
                 barber.getCurrentAnimation().update();

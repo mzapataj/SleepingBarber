@@ -1,14 +1,10 @@
 package Logic;
 
-import Graficos.Animation;
-import Graficos.Imagen;
 import Graficos.Lienzo;
 import static Logic.Barberia.Log;
-import Main.Main;
-import java.awt.image.BufferedImage;
+import java.awt.Container;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,6 +22,9 @@ public class Cliente extends Persona {
     private int sillaAsignada = -1;
     private boolean atendido;
     public Semaphore turno;
+    public JLabel label;
+    
+    public static int clientesIdos = 0;
     
     public Cliente(Barberia b, String nombreProceso) {
         super(b, nombreProceso);
@@ -34,7 +33,10 @@ public class Cliente extends Persona {
         direccion = 0;
         currentAnimation = animaciones[0];
         atendido = false;
+        
+        label = new JLabel(nombreProceso.substring(8));
         turno = new Semaphore(0, true);
+        
         //System.out.println(this.getName() + " llega a la barbería");
     }
 
@@ -49,29 +51,30 @@ public class Cliente extends Persona {
         Barberia.Log(this.getName() + " está recibiendo un corte de cabello.");
         
         long delta = 0;
-        while (true) {
-            if (!barberia.getLienzo().paused) {
+        //while (true) {
+            //if (!barberia.getLienzo().paused) {
                 try {
                     tiempoInicioAtendida = System.currentTimeMillis();
                     
-                    //System.out.println("delta cliente: "+delta);
-                    sleep(5050-delta);
-                    if (Cliente.haSidoPausado) {
+                    //sleep(5050-delta);
+                    sleep(5050);
+                    setAtendido(true);
+                    removerLabel();
+                    Cliente.clientesIdos++;
+                    
+                    /*if (Cliente.haSidoPausado) {
                         delta = Math.abs(Main.tiempoInicioPausa-tiempoInicioAtendida);
                         Cliente.haSidoPausado = false;
                     }else{
                         setAtendido(true);
                         break;
-                    }
-                    //System.out.println("delta cliente: "+delta);
+                    }*/
                 } catch (InterruptedException ex) {
 
                 }               
-            }
-            int i = 0;
-            System.out.println(getName());
+            //}
             
-        }
+        //}
                 
     }
 
@@ -89,6 +92,14 @@ public class Cliente extends Persona {
 
     public void setAtendido(boolean atendido) {
         this.atendido = atendido;
+    }
+    
+    public void removerLabel(){
+        Container parent = label.getParent();
+        parent.remove(label);
+        parent.validate();
+        parent.repaint();
+
     }
 
     @Override

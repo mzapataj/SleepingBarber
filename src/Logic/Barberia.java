@@ -1,12 +1,8 @@
 package Logic;
 
 
-import Graficos.Animation;
 import Graficos.Imagen;
 import Graficos.Lienzo;
-import com.sun.corba.se.spi.transport.CorbaConnection;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -86,7 +82,7 @@ public class Barberia {
             
             sillasLibres -= 1;
             customer.setSillaAsignada(asignarSilla());
-            Log(customer.getName() + " se le asignó la silla número " + customer.getSillaAsignada());
+            Log(customer.getName() + " se le asignó la silla número " + (customer.getSillaAsignada()+1));
             customer.getCurrentAnimation().start();
             sillasAccesibles.release();
             customer.turno.acquire();
@@ -98,7 +94,9 @@ public class Barberia {
             
             sillasAccesibles.release();
             Log("No hay sillas libres. "+ customer.getName() + " se va de la barbería.");
+            Cliente.clientesIdos++;
             
+            customer.removerLabel();
         }
         
         lienzo.clientes.remove(customer);

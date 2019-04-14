@@ -2,9 +2,6 @@ package Main;
 
 import Graficos.Lienzo;
 import Logic.Barberia;
-import Logic.Barbero;
-import Logic.Cliente;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -28,14 +25,14 @@ public class Main {
 
         
 
-        int numSillas = 13;
-        while (numSillas > 12) {
+        int numSillas;
+        do{
             try {
                 numSillas = Integer.valueOf(JOptionPane.showInputDialog(null, "Digite el numero de sillas de la barbería (máx 12 sillas)", "Barbero Dormilón", 1));
             } catch (NumberFormatException e) {
                 numSillas = -1;
             }
-        }
+        }while(numSillas > 12);
         
         if (numSillas != -1) {
             
@@ -51,6 +48,7 @@ public class Main {
             
             ui.inicializarBotonCliente();
             ui.inicializarBotonPausa();
+            ui.inicializarBotonClienteIdos();
             
             ui.setLienzo(lienzo);
             ui.add(lienzo);
