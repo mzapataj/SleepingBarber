@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Graphics;
 import static java.lang.Thread.sleep;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -40,8 +41,8 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
     volatile boolean running = false;
     public boolean paused;
     public boolean haSidoPausado;
-
-    public Lienzo(int x, int y, Barberia barberia) {
+    
+    public Lienzo(int x, int y, Barberia barberia, ResourceBundle messages) {
 
         initComponents();
         //setLocation((x - 900) / 2, 0);
@@ -50,7 +51,7 @@ public final class Lienzo extends javax.swing.JPanel implements Runnable {
         fondo = new Imagen("fondo");
         clientes = new CopyOnWriteArrayList<>();
         barbershop = barberia;
-        barber = new Barbero(barberia, "Barbero");
+        barber = new Barbero(barberia, messages.getString("barber"), messages);
         barber.setCurrentAnimation(barber.getAnimaciones()[1]);
         sillas = barbershop.spriteSillas;
         paused = false;

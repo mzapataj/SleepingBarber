@@ -3,6 +3,7 @@ package Logic;
 import Graficos.Lienzo;
 import static Logic.Barberia.Log;
 import java.awt.Container;
+import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 import javax.swing.JLabel;
 
@@ -25,14 +26,15 @@ public class Cliente extends Persona {
     public JLabel label;
     
     public static int clientesIdos = 0;
+       
     
-    public Cliente(Barberia b, String nombreProceso) {
-        super(b, nombreProceso);
+    public Cliente(Barberia b, String nombreProceso, ResourceBundle resourceBundle) {
+        super(b, nombreProceso, resourceBundle);
         barberia = b;
         cargarAnimaciones("guy", 5);
         direccion = 0;
         currentAnimation = animaciones[0];
-        atendido = false;
+        atendido = false;               
         
         label = new JLabel(nombreProceso.substring(8));
         turno = new Semaphore(0, true);
@@ -47,35 +49,21 @@ public class Cliente extends Persona {
 
         currentAnimation.stop();
         setCurrentAnimation(animaciones[1]);
-        currentAnimation.setLocation(625 + 35, 98 + 28);
-        Barberia.Log(this.getName() + " está recibiendo un corte de cabello.");
+        currentAnimation.setLocation(625 + 35, 98 + 28);        
+        Barberia.Log(String.format( messages.getString("receive-cut-hair"), this.getName()));
         
         long delta = 0;
-        //while (true) {
-            //if (!barberia.getLienzo().paused) {
-                try {
-                    tiempoInicioAtendida = System.currentTimeMillis();
-                    
-                    //sleep(5050-delta);
-                    sleep(5050);
-                    setAtendido(true);
-                    removerLabel();
-                    Cliente.clientesIdos++;
-                    
-                    /*if (Cliente.haSidoPausado) {
-                        delta = Math.abs(Main.tiempoInicioPausa-tiempoInicioAtendida);
-                        Cliente.haSidoPausado = false;
-                    }else{
-                        setAtendido(true);
-                        break;
-                    }*/
-                } catch (InterruptedException ex) {
+        
+        try {
+            tiempoInicioAtendida = System.currentTimeMillis();
 
-                }               
-            //}
-            
-        //}
-                
+            sleep(5050);
+            setAtendido(true);
+            removerLabel();
+            Cliente.clientesIdos++;                                       
+        } catch (InterruptedException ex) {
+
+        }           
     }
 
     public void setSillaAsignada(int sillaAsignada) {
@@ -119,7 +107,8 @@ public class Cliente extends Persona {
                 direccion = 1;
                 animaciones[direccion].setLocation(currentAnimation.x, currentAnimation.y);
                 setCurrentAnimation(animaciones[direccion]);
-                Log(getName() + " se siente en una silla de espera.");
+                
+                Barberia.Log(String.format( messages.getString("wait-chair"), getName()));                                
                 barberia.clientes.release();
                 turno.release();
             }
@@ -138,8 +127,7 @@ public class Cliente extends Persona {
     public void run() {
         try {       
             barberia.llegadaCliente(this);
-        } catch (InterruptedException ex) {
-            //Log(getName() + " ha sido interrumpido.");
+        } catch (InterruptedException ex) {            
         }
     }
 }

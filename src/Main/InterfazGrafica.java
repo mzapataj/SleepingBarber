@@ -10,6 +10,7 @@ import Logic.Barberia;
 import Logic.Cliente;
 import Logic.MessageConsole;
 import java.awt.Color;
+import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,12 +24,14 @@ public class InterfazGrafica extends javax.swing.JFrame {
      */
     Lienzo lienzo;
     int customerCounter = 0;
+    private ResourceBundle messages;
 
     public void setLienzo(Lienzo lienzo) {
         this.lienzo = lienzo;
     }
 
-    public InterfazGrafica() {
+    public InterfazGrafica( ResourceBundle messages) {
+        this.messages = messages;
         initComponents();
 
     }
@@ -65,7 +68,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
 
-        botonCliente.setText("Nuevo Cliente");
+        botonCliente.setText(messages.getString("new-customer"));
         botonCliente.setMaximumSize(new java.awt.Dimension(10000, 10000));
         botonCliente.setMinimumSize(new java.awt.Dimension(0, 0));
         botonCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -76,7 +79,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
         getContentPane().add(botonCliente);
         botonCliente.setBounds(370, 350, 99, 33);
 
-        botonPausa.setText("Pausar");
+        botonPausa.setText(messages.getString("pause"));
         botonPausa.setMaximumSize(new java.awt.Dimension(10000, 10000));
         botonPausa.setMinimumSize(new java.awt.Dimension(0, 0));
         botonPausa.addActionListener(new java.awt.event.ActionListener() {
@@ -87,14 +90,13 @@ public class InterfazGrafica extends javax.swing.JFrame {
         getContentPane().add(botonPausa);
         botonPausa.setBounds(660, 350, 65, 33);
 
-        botonClientesIdos.setText("Clientes Idos");
+        botonClientesIdos.setText(messages.getString("show-gone-customers"));
         botonClientesIdos.setMaximumSize(new java.awt.Dimension(10000, 10000));
         botonClientesIdos.setMinimumSize(new java.awt.Dimension(0, 0));
         botonClientesIdos.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JOptionPane.showMessageDialog(null, "Se han ido "+Cliente.clientesIdos+ " clientes.");
-                
+                JOptionPane.showMessageDialog(null, String.format(messages.getString("amount-gone-customers"), Cliente.clientesIdos) );
             }
         });
         getContentPane().add(botonClientesIdos);
@@ -109,7 +111,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
         mc.redirectOut(Color.white, null);
         jScrollPane1.setBounds(1000, 50, 330, 550);
 
-        jLabel1.setText("Registro");
+        jLabel1.setText(messages.getString("register"));
         jLabel1.setBounds(1000 + 165 - 40, 10, 80, 25);
 
         getContentPane().add(jLabel1);
@@ -120,7 +122,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
    private void botonClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonClienteActionPerformed
 
        customerCounter++;
-       Cliente cliente = new Cliente(Main.barberia, "Cliente " + customerCounter);
+       Cliente cliente = new Cliente(Main.barberia, messages.getString("customer") + " " + customerCounter, messages);
 
        cliente.getCurrentAnimation().setLocation(lienzo.getWidth() / 2 - 17, lienzo.getHeight() - 50);
        cliente.label.setBounds(cliente.getCurrentAnimation().x+16, cliente.getCurrentAnimation().y-50, 75, 10);
@@ -151,9 +153,9 @@ public class InterfazGrafica extends javax.swing.JFrame {
              */
             detenerHilos();
 
-            Barberia.Log("Barbería pausada....");
+            Barberia.Log(messages.getString("paused-barbery"));
             Main.tiempoInicioPausa = System.currentTimeMillis();
-            botonPausa.setText("Reanudar");
+            botonPausa.setText(messages.getString("resume"));
 
         } else {
             lienzo.paused = false;
@@ -167,8 +169,8 @@ public class InterfazGrafica extends javax.swing.JFrame {
                     cliente.resume();
                 }
             }
-            Barberia.Log("Pausa terminada.");
-            botonPausa.setText("Pausar");
+            Barberia.Log(messages.getString("pause-finished"));
+            botonPausa.setText(messages.getString("pause"));
         }
     }//GEN-LAST:event_botonPausaActionPerformed
 

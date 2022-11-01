@@ -3,8 +3,10 @@ package Logic;
 
 import Graficos.Imagen;
 import Graficos.Lienzo;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.concurrent.*;
 
 /*
@@ -28,17 +30,22 @@ public class Barberia {
     int sillasLibres;
     private Lienzo lienzo;
     boolean[] sillas; 
-
-    public Barberia(int tam) {
+    private ResourceBundle messages;
+    
+    public Barberia(int tam, ResourceBundle messages) {
         
         sillasLibres = tam;
+        
         barberoListo = new Semaphore(0, true);
         sillasAccesibles =  new Semaphore(1, true);
         clientes = new Semaphore(0, true);
         spriteSillas = new CopyOnWriteArrayList<>();
         generateSeatsSprite();
-        Log("Una nueva barbería ha sido abierta al público.");
+        
+        Log(messages.getString("welcome"));
         sillas = new boolean[tam];
+        
+        this.messages=messages;
         
     }
     
@@ -82,25 +89,25 @@ public class Barberia {
             
             sillasLibres -= 1;
             customer.setSillaAsignada(asignarSilla());
-            Log(customer.getName() + " se le asignó la silla número " + (customer.getSillaAsignada()+1));
+            
+            Log(String.format(messages.getString("assign-chair"), customer.getName(), String.valueOf(customer.getSillaAsignada()+1)));
             customer.getCurrentAnimation().start();
             sillasAccesibles.release();
             customer.turno.acquire();
             barberoListo.acquire();
             customer.recibirCortarCabello();
-            Log(customer.getName() + " se va de la barbería con un nuevo corte.");
+            Log(String.format(messages.getString("exit-barbery"), customer.getName()) );
     
         }else{
             
             sillasAccesibles.release();
-            Log("No hay sillas libres. "+ customer.getName() + " se va de la barbería.");
+            Log( String.format(messages.getString("not-available-chairs") , customer.getName()) );
             Cliente.clientesIdos++;
             
             customer.removerLabel();
         }
         
-        lienzo.clientes.remove(customer);
-            //System.out.println(nombre + " se va de la barbería.");
+        lienzo.clientes.remove(customer);            
     }
     
     public synchronized int asignarSilla(){

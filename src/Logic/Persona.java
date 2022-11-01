@@ -4,6 +4,7 @@ import Graficos.Animation;
 import Graficos.Imagen;
 import Graficos.Lienzo;
 import java.awt.image.BufferedImage;
+import java.util.ResourceBundle;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,6 +18,7 @@ import java.awt.image.BufferedImage;
 public abstract class Persona extends Thread {
 
     Barberia barberia;
+    protected ResourceBundle messages;
     protected Animation[] animaciones = new Animation[4];
     protected Animation currentAnimation;
     public long tiempoInterrupcion;
@@ -28,11 +30,12 @@ public abstract class Persona extends Thread {
      */
     byte direccion;
 
-    public Persona(Barberia b, String nombreProceso) {
+    public Persona(Barberia b, String nombreProceso, ResourceBundle resourceBundle ) {
 
         super(nombreProceso);
         barberia = b;
-        Barberia.Log(this.getName() + " llega a la barbería.");
+        messages = resourceBundle;
+        Barberia.Log( String.format( messages.getString("arrive-barbery") , this.getName()));
 
     }
 
@@ -72,5 +75,5 @@ public abstract class Persona extends Thread {
 
     @Override
     public abstract void run();
-
+    
 }

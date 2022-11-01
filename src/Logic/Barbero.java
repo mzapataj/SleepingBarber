@@ -5,6 +5,7 @@ import Graficos.Imagen;
 import Graficos.Lienzo;
 import static Logic.Barberia.Log;
 import java.awt.image.BufferedImage;
+import java.util.ResourceBundle;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,13 +19,13 @@ import java.awt.image.BufferedImage;
 public class Barbero extends Persona {
 
     boolean estaDormido;
-    public static boolean haSidoPausado;
-    
-    public Barbero(Barberia b, String nombreProceso) {
+    public static boolean haSidoPausado;    
+        
+    public Barbero(Barberia b, String nombreProceso, ResourceBundle resourceBundle) {
 
-        super(b, nombreProceso);
-        estaDormido = true;
-        cargarAnimaciones("barber", 0); 
+        super(b, nombreProceso, resourceBundle);
+        estaDormido = true;        
+        cargarAnimaciones("barber", 0);
         BufferedImage[] up = {new Imagen("barberUp2").getImagen(), new Imagen("barberUp3").getImagen()};
         animaciones[0] = new Animation(up, 10, 0, -1*0);
         animaciones[0].setLocation(660, 155);
@@ -45,39 +46,20 @@ public class Barbero extends Persona {
     public void cortarCabello() {
         setCurrentAnimation(getAnimaciones()[0]);
         getCurrentAnimation().start();
-        Barberia.Log(getName() + " está cortando el cabello.");
+        Barberia.Log(
+                String.format(messages.getString("cut-hair"),getName() ) 
+            );
         long delta = 0;
         
-     /*   do{
-            
-            
-        }while(getAnimaciones()[1].equals(getCurrentAnimation()));
-       */ 
-        //while (true) {
-            //if (!barberia.getLienzo().paused) {
-                try {
-                    /*System.out.println("delta barbero: "+ delta);
-                    tiempoInicioAtendida = System.currentTimeMillis();
-                    sleep(5000-delta);*/
-                    sleep(5000);
-                    setCurrentAnimation(getAnimaciones()[1]);
-                    /*if (Barbero.haSidoPausado) {
-                        delta = Math.abs(Main.tiempoInicioPausa-tiempoInicioAtendida);
-                        Barbero.haSidoPausado = false;
-                    }else{
-                        setCurrentAnimation(getAnimaciones()[1]);
-                        break;
-                    }
-                    System.out.println("delta barbero: "+ delta);
-                    */
-                } catch (InterruptedException ex) {
-                    
-                }
-                
-            //}
-            
-        //}
 
+        try {
+
+            sleep(5000);
+            setCurrentAnimation(getAnimaciones()[1]);
+
+        } catch (InterruptedException ex) {
+
+        }
     }
 
     @Override
@@ -95,15 +77,15 @@ public class Barbero extends Persona {
     public void moveHandler(Lienzo lienzo) {
 
         if (!lienzo.clientes.isEmpty()) {
-            if (estaDormido) {
-                Log(getName() + " se despierta.");
+            if (estaDormido) {                
+                Log(String.format( messages.getString("barber-wake"), getName()) );                
                 setCurrentAnimation(getAnimaciones()[direccion]);
                 getCurrentAnimation().start();
                 setEstaDormido(false);
             }
         } else {
-            if (!estaDormido) {
-                Log(getName() + " se duerme");
+            if (!estaDormido) {                
+                Log(String.format( messages.getString("barber-sleep"), getName()) );                    
                 setCurrentAnimation(getAnimaciones()[direccion]);
                 getCurrentAnimation().stop();
                 setEstaDormido(true);

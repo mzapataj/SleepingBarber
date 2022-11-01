@@ -2,6 +2,8 @@ package Main;
 
 import Graficos.Lienzo;
 import Logic.Barberia;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -23,12 +25,14 @@ public class Main {
     
     public static void main(String[] args) throws InterruptedException {
 
-        
+        Locale locale = Locale.getDefault();            
+        ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
+
 
         int numSillas;
         do{
             try {
-                numSillas = Integer.valueOf(JOptionPane.showInputDialog(null, "Digite el numero de sillas de la barbería (máx 12 sillas)", "Barbero Dormilón", 1));
+                numSillas = Integer.valueOf(JOptionPane.showInputDialog(null,  messages.getString("chairs-number"), messages.getString("sleeping-barber"), 1));
             } catch (NumberFormatException e) {
                 numSillas = -1;
             }
@@ -36,13 +40,15 @@ public class Main {
         
         if (numSillas != -1) {
             
-            InterfazGrafica ui = new InterfazGrafica();
+            InterfazGrafica ui = new InterfazGrafica(messages);
             ui.setExtendedState(JFrame.MAXIMIZED_BOTH);
             ui.setVisible(true);
+            
+            
 
-            barberia = new Barberia(numSillas);
+            barberia = new Barberia(numSillas,messages);
 
-            Lienzo lienzo = new Lienzo(ui.getWidth(), ui.getHeight(), barberia);
+            Lienzo lienzo = new Lienzo(ui.getWidth(), ui.getHeight(), barberia, messages);
             barberia.setLienzo(lienzo);
             lienzo.barber.start();
             
